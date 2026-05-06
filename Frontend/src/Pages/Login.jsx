@@ -1,117 +1,250 @@
 import { useState } from "react";
+
 import { Link, useNavigate } from "react-router-dom";
+
+import { sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+
+import { auth, facebookProvider, googleProvider } from "../firebase/firebase.config";
+
+import { toast } from "react-toastify";
+
+import { FiEye, FiEyeOff } from "react-icons/fi";
+
 import fbLogo from "/fb-logo.png";
 import googleLogo from "/google-logo.png";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMobileScreen } from "@fortawesome/free-solid-svg-icons";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [loginType, setLoginType] = useState("password");
+
+  const [email, setEmail] = useState("");
+
+  const [password, setPassword] = useState("");
+
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      return toast.error("Please fill all fields");
+    }
+
+    try {
+      setLoading(true);
+
+      await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      toast.success("Login Successful");
+
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+
+      toast.success("Google Login Successful");
+
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleFacebookLogin = async () => {
+    try {
+      await signInWithPopup(auth, facebookProvider);
+
+      toast.success("Facebook Login Successful");
+
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      return toast.error(
+        "Please enter your email first"
+      );
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+
+      toast.success(
+        "Password reset email sent"
+      );
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="relative w-115 rounded-sm bg-white px-8 pb-8 pt-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+      <div className="relative w-full max-w-107.5 rounded-2xl bg-white px-8 py-8 shadow-2xl">
 
-        {/* close button*/}
+        {/* close button */}
         <button
           onClick={() => navigate("/")}
-          className="absolute right-5 top-1 cursor-pointer text-[34px] font-light text-gray-500 hover:text-black"
+          className="absolute right-5 top-3 cursor-pointer text-[34px] font-light text-gray-400 transition hover:text-black"
         >
           ×
         </button>
 
-        <div className="mb-10 flex items-center justify-center gap-10 text-[15px] font-semibold">
-          <button
-            onClick={() => setLoginType("password")}
-            className={`cursor-pointer ${loginType === "password" ? "text-gray-900" : "text-gray-400"}`}
-          >
-            Password
-          </button>
+        {/* title */}
+        <div className="mb-8">
+          <h2 className="text-[30px] font-bold text-gray-900">
+            Welcome Back
+          </h2>
 
-          <span className="h-5 w-px bg-gray-300"></span>
-
-          <button
-            onClick={() => setLoginType("phone")}
-            className={`cursor-pointer ${loginType === "phone" ? "text-gray-900" : "text-gray-400"}`}
-          >
-            Phone Number
-          </button>
+          <p className="mt-2 text-sm text-gray-500">
+            Login to continue shopping
+          </p>
         </div>
 
-        {loginType === "password" ? (
-          <>
+        {/* email */}
+        <div className="mb-4">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
+            Email Address
+          </label>
 
-          {/* Email and phone input field */}
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) =>
+              setEmail(e.target.value)
+            }
+            className="h-12 w-full rounded-xl border border-gray-300 px-4 text-sm outline-none transition focus:border-[#f57224]"
+          />
+        </div>
+
+        {/* password */}
+        <div className="mb-2">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
+            Password
+          </label>
+
+          <div className="relative">
             <input
-              type="text"
-              placeholder="Please enter your Phone or Email"
-              className="mb-5 h-11 w-full rounded-sm border border-gray-300 px-4 text-sm outline-none focus:border-gray-400"
+              type={
+                showPassword
+                  ? "text"
+                  : "password"
+              }
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
+              className="h-12 w-full rounded-xl border border-gray-300 px-4 pr-12 text-sm outline-none transition focus:border-[#f57224]"
             />
 
-            <input
-              type="password"
-              placeholder="Please enter your password"
-              className="mb-2 h-11 w-full rounded-sm border border-gray-300 px-4 text-sm outline-none focus:border-gray-400"
-            />
-
-            <p className="mb-7 cursor-pointer text-right text-sm text-gray-400 hover:text-[#f57224]">
-              Forgot password?
-            </p>
-
-            <button className="h-11 w-full cursor-pointer rounded-sm bg-[#f57224] text-sm font-semibold text-white hover:bg-[#e74e00]">
-              LOGIN
+            <button
+              type="button"
+              onClick={() =>
+                setShowPassword(!showPassword)
+              }
+              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
+            >
+              {showPassword ? (
+                <FiEyeOff size={20} />
+              ) : (
+                <FiEye size={20} />
+              )}
             </button>
-          </>
-        ) : (
-          <>
+          </div>
+        </div>
 
-          {/* phone number input field */}
-            <div className="mb-12 flex gap-2">
-              <div className="flex h-12 w-21 items-center justify-center rounded-sm border border-gray-300 text-sm text-gray-700">
-                🇧🇩 +880
-              </div>
+        {/* forgot password */}
+        <p
+          onClick={handleForgotPassword}
+          className="mb-6 cursor-pointer text-right text-sm text-gray-400 transition hover:text-[#f57224]"
+        >
+          Forgot Password?
+        </p>
 
-              <input
-                type="text"
-                placeholder="Please enter your phone number"
-                className="h-12 flex-1 rounded-sm border border-gray-300 px-4 text-sm outline-none focus:border-gray-400"
-              />
-            </div>
-
-        <button className="flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-sm bg-[#f57224] text-sm font-semibold text-white hover:bg-[#e74e00]">
-        
-        <FontAwesomeIcon icon={faMobileScreen} className="text-[14px]" />
-
-        Send code via SMS
+        {/* login button */}
+        <button
+          onClick={handleLogin}
+          disabled={loading}
+          className={`flex h-12 w-full items-center justify-center rounded-xl text-sm font-semibold text-white transition ${
+            loading
+              ? "cursor-not-allowed bg-orange-300"
+              : "cursor-pointer bg-[#f57224] hover:bg-[#e65a0a]"
+          }`}
+        >
+          {loading ? (
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+          ) : (
+            "LOGIN"
+          )}
         </button>
-          </>
-        )}
 
-        <p className="mt-5 text-center text-sm text-gray-500">
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-blue-600 hover:underline">
-            Sign up
-          </Link>
-        </p>
-
-        <p className="mt-20 text-center text-sm text-gray-400">
-          Or, login with
-        </p>
-
-        <div className="mt-6 flex items-center justify-center gap-10">
-          <Link to="/login/google" className="flex gap-1 text-sm text-gray-600">
-            <img src={googleLogo} alt="Google" className="h-5 w-5" />
-            Google
-          </Link>
-
+        {/* signup link */}
+        <p className="mt-6 text-center text-sm text-gray-500">
+          Don&apos;t have an account?{" "}
           <Link
-            to="/login/facebook"
-            className="flex gap-1 text-sm text-gray-600"
+            to="/signup"
+            className="font-semibold text-[#f57224] hover:underline"
           >
-            <img src={fbLogo} alt="Facebook" className="h-5 w-5" />
-            Facebook
+            Sign Up
           </Link>
+        </p>
+
+        {/* divider */}
+        <div className="my-8 flex items-center gap-3">
+          <div className="h-px flex-1 bg-gray-200"></div>
+
+          <p className="text-sm text-gray-400">
+            Or continue with
+          </p>
+
+          <div className="h-px flex-1 bg-gray-200"></div>
+        </div>
+
+        {/* social login */}
+        <div className="flex flex-col gap-4">
+
+          {/* google */}
+          <button
+            onClick={handleGoogleLogin}
+            className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-gray-300 bg-white text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+          >
+            <img
+              src={googleLogo}
+              alt="Google"
+              className="h-5 w-5"
+            />
+
+            Continue with Google
+          </button>
+
+          {/* facebook */}
+          <button
+            onClick={handleFacebookLogin}
+            className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-gray-300 bg-white text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+          >
+            <img
+              src={fbLogo}
+              alt="Facebook"
+              className="h-5 w-5"
+            />
+
+            Continue with Facebook
+          </button>
         </div>
       </div>
     </div>
