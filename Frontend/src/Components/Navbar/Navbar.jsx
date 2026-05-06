@@ -5,8 +5,20 @@ import logo from "/daraz-logo.png";
 import QR from "/AppQR.png";
 import playStore from "/playstore-logo.png";
 import appStore from "/appstore-logo.png";
+import { useState } from "react";
 
 const Navbar = () => {
+
+const [searchText, setSearchText] = useState("")
+
+const handleSearch =()=>{
+  if(!searchText.trim()) return;
+
+  console.log("searching for: ", searchText);
+
+  // Api call to search for the product
+}
+
   return (
     <div className="h-29.75 w-full bg-[#f85606] text-white">
       
@@ -96,10 +108,17 @@ const Navbar = () => {
           <input
             type="text"
             placeholder="Search in Daraz"
+            value={searchText}
+            onChange={(e)=>setSearchText(e.target.value)}
+            onKeyDown={(e)=>{
+              if(e.key === "Enter"){
+                handleSearch()
+              }
+            }}
             className="h-full flex-1 border-none px-5 text-[14px] text-gray-700 outline-none"
           />
 
-          <button className="flex h-full w-12 items-center justify-center bg-[#ffe1d2] text-[#f85606]">
+          <button onClick={handleSearch} className="flex h-full w-12 items-center justify-center bg-[#ffe1d2] text-[#f85606] cursor-pointer">
             <FiSearch size={23} />
           </button>
         </div>
