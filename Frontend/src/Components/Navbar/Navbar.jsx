@@ -1,75 +1,63 @@
+import { Link } from "react-router-dom";
+import { FiSearch, FiShoppingCart } from "react-icons/fi";
+import logo from "/daraz-logo.png";
+import QR from "/AppQR.png";
+
 const Navbar = () => {
   return (
-    <div className="navbar bg-base-100 shadow-sm">
-      <div className="navbar-start">
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              {" "}
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h8m-8 6h16"
-              />{" "}
-            </svg>
+    <div className="h-29.75 w-full bg-[#f85606] text-white">
+      {/* text links */}
+      <div className="mx-auto flex h-6.25 max-w-309.75 items-center justify-end gap-8 pr-6 text-[11px] uppercase">
+        <div className="dropdown dropdown-end">
+          <div tabIndex={0} role="button" className="cursor-pointer">
+            SAVE MORE ON APP
           </div>
-          <ul
-            tabIndex="-1"
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+
+          <div
+            tabIndex={0}
+            className="dropdown-content z-50 mt-3 rounded bg-white p-4 text-black shadow"
           >
-            <li>
-              <a>Item 1</a>
-            </li>
-            <li>
-              <a>Parent</a>
-              <ul className="p-2">
-                <li>
-                  <a>Submenu 1</a>
-                </li>
-                <li>
-                  <a>Submenu 2</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a>Item 3</a>
-            </li>
-          </ul>
+            <div className="flex h-32 w-32 items-center justify-center bg-gray-200 text-xs">
+              <img src={QR} alt="App QR Code" className="w-full h-full object-contain" />
+            </div>
+          </div>
         </div>
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+
+        <Link to="/seller">BECOME A SELLER</Link>
+        <Link to="/help">HELP & SUPPORT</Link>
+        <Link to="/login">LOGIN</Link>
+        <Link to="/signup">SIGN UP</Link>
+
+        <select className="bg-[#f85606] text-white outline-none">
+          <option value="bn">বাংলা</option>
+          <option value="en">English</option>
+        </select>
       </div>
-      <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
-          <li>
-            <a>Item 1</a>
-          </li>
-          <li>
-            <details>
-              <summary>Parent</summary>
-              <ul className="p-2 bg-base-100 w-40 z-1">
-                <li>
-                  <a>Submenu 1</a>
-                </li>
-                <li>
-                  <a>Submenu 2</a>
-                </li>
-              </ul>
-            </details>
-          </li>
-          <li>
-            <a>Item 3</a>
-          </li>
-        </ul>
-      </div>
-      <div className="navbar-end">
-        <a className="btn">Button</a>
+
+      {/* main navbar */}
+      <div className="mx-auto flex h-23.5 max-w-309.75 items-center px-4">
+        {/* daraz logo */}
+        <Link to="/" className="mr-22.5 w-30">
+          <img src={logo} alt="Daraz Logo" className="w-full object-contain" />
+        </Link>
+
+        {/* search box */}
+        <div className="flex h-11.5 w-172.5 overflow-hidden rounded-sm bg-white">
+          <input
+            type="text"
+            placeholder="Search in Daraz"
+            className="h-full flex-1 px-5 text-[14px] text-gray-700 outline-none placeholder:text-gray-400"
+          />
+
+          <button className="flex h-full w-11.5 items-center justify-center bg-[#ffe1d2] text-[#f85606]">
+            <FiSearch size={23} />
+          </button>
+        </div>
+
+        {/* add cart */}
+        <Link to="/cart" className="ml-7">
+          <FiShoppingCart size={32} />
+        </Link>
       </div>
     </div>
   );
