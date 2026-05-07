@@ -1,6 +1,10 @@
+import Banner from "../Components/Banner/Banner";
+
 const Home = () => {
   return (
-    <div className="text-2xl bg-green-500 text-white">This is home page</div>
+    <main className="min-h-screen bg-[#f4f4f6] pb-10">
+      <Banner />
+    </main>
   );
 };
 
